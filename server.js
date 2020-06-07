@@ -28,6 +28,9 @@ function handler(req, res) {
             res.end(data);
         }
     );
+    // res.statusCode = 200;
+    // res.setHeader('Content-Type', 'text/html');
+    // res.end('<h1>Hello World</h1>');
 }
 
 //WebSockets Communication
