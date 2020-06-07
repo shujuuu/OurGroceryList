@@ -12,7 +12,7 @@ app.listen(port, () => {
 //requesting handler
 function handler(req, res) {
     const parsedUrl = url.parse(req.url);
-    console.log("The Request is: " + parsedUrl.pathname);
+    // console.log("The Request is: " + parsedUrl.pathname);
 
     if (parsedUrl.pathname === '/') {
         const htmlPath = __dirname + parsedUrl.pathname + 'index.html'
@@ -30,28 +30,31 @@ function handler(req, res) {
 //Create the WebSockets Communication
 const io = require("socket.io").listen(app);
 let totalClients = 0;
+
 //Start Communication
 io.sockets.on("connection", socket => {
-    totalClients++;
-    console.log('a new client has connected: ' + socket.id);
-    console.log('total clients: ' + totalClients);
 
-    //receive from a client event
+    //demo1 -> listen to client event
+    console.log("new client connected...");
+
+    //demo2 -> listen to client event + receive msg
+    socket.on("someone_joined", data => {
+        console.log(data);
+
+        //demo3 -> send to client
+        socket.emit("server_response", "Wave back from server");
+    })
+
+
+    //demo4 -> Shopping list, listen to client event + receive data
     socket.on('add_item', data => {
-        console.log("new item from client: " + data);
         const dataToClient = data;
 
-        //emit from server to everyone
+        //demo5 -> Shopping list, send data to client
         io.sockets.emit("receive_item", dataToClient);
 
-        //emit from server to everyone but the sender
-        // socket.broadcast.emit("receive_item", dataToClient);
+        //send data to everyone except the sender
+        //socket.broadcast.emit("receive_item", dataToClient);
     })
 
-    //when a client disconnects
-    socket.on('disconnect', () => {
-        totalClients--;
-        console.log('total users: ' + totalClients);
-        console.log('a client disconnects: ' + socket.id);
-    })
 });

@@ -13,51 +13,79 @@
         font-family: sans-serif;
     }
 
-    section {
-        padding: 50px;
+    body {
+        padding: 0;
+        margin: 0;
+        height: 100%;
     }
 
-    #title {
-        color: #888;
-        font-size: 12px;
+    section {
+        background: white;
+        max-width: 600px;
+        /* padding: 20px; */
+        margin: 0 auto;
+        border: 10px solid #000;
+
+    }
+
+    #prompt {
+        /* color: white; */
+        font-size: 15px;
     }
 
     input {
         margin: 2px;
         text-align: left;
-        padding: 2px 0;
+        padding: 5px;
+        font-size: 16px;
+    }
+
+    input[type=submit] {
+        padding: 8px;
     }
 
     input:focus {
         outline: none;
     }
 
+    #showArea {
+        padding: 50px;
+    }
+
     #typeArea {
         background-color: black;
         border-color: 5px solid #000;
-        padding: 10px 0;
+        padding: 30px;
+        display: flex;
     }
 
     #grocery-list {
         min-height: 200px;
     }
 
+    #grocery-list>p {
+        border-bottom: 1px solid #ddd;
+        padding: 10px 0 10px 0;
+        margin: 0;
+        font-size: 28px;
+    }
+
     #toBuy {
-        width: 80%;
-        /* font-size: 12px; */
+        width: 85%;
+        font-size: 20px;
     }
 </style>
 
 <body>
-
     <section>
-        <p id='title'>Add grocery item to the list.</p>
-        <!-- <p>Nothing to purchase</p> -->
-        <div id="grocery-list">
-
+        <div id='showArea'>
+            <p id='prompt'>Add grocery item to the list.</p>
+            <!-- <p>Nothing to purchase</p> -->
+            <div id="grocery-list">
+            </div>
         </div>
         <div id='typeArea'>
-            <input type="text" id="toBuy" name="toBuy" placeholder="What you think of buying">
+            <input type="text" id="toBuy" name="toBuy" placeholder="What do you need to buy">
             <input type="submit" id="submitBtn" value="Add Item"
                 onclick="submitItem(document.getElementById('toBuy').value)">
         </div>
@@ -67,26 +95,30 @@
     //Client-side code
     const socket = io.connect();
 
-    //send a message when connect
-    socket.on("connection", data => {
-        console.log('hi'); //not working
+    //demo1 -> send socket connection
+    socket.on('connect', () => {
+        //demo2 -> send a msg when connect
+        socket.emit('someone_joined', 'Hello from client');
     });
 
-    //send a message when item is submitted
+    //demo3 -> receive to server
+    socket.on("server_response", data => {
+        console.log(data);
+    });
+
+
+    //demo4 -> Shopping list, send data to server
     const submitItem = data => {
-        console.log("TO server: " + data);
+        document.getElementById('toBuy').value = '';
         socket.emit("add_item", data);
-        // logItem(data);
     }
 
-    //receive from server
+    //demo5 -> Shopping list, listen to server event + receive data
     socket.on("receive_item", data => {
-        console.log("FROM server: " + data);
         logItem(data);
     });
 
-
-    //log an item into the page
+    //log the item to web page
     const logItem = data => {
         console.log(data);
         const groceryList = document.getElementById("grocery-list");
