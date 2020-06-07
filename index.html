@@ -76,7 +76,7 @@
     const submitItem = data => {
         console.log("TO server: " + data);
         socket.emit("add_item", data);
-        logItem(data);
+        // logItem(data);
     }
 
     //receive from server
