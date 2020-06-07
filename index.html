@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shared Shopping List</title>
+</head>
+<script type="text/javascript" src="/socket.io/socket.io.js"></script>
+<style>
+    * {
+        text-align: center;
+        font-family: sans-serif;
+    }
+
+    section {
+        padding: 50px;
+    }
+
+    #title {
+        color: #888;
+        font-size: 12px;
+    }
+
+    input {
+        margin: 2px;
+        text-align: left;
+        padding: 2px 0;
+    }
+
+    input:focus {
+        outline: none;
+    }
+
+    #typeArea {
+        background-color: black;
+        border-color: 5px solid #000;
+        padding: 10px 0;
+    }
+
+    #grocery-list {
+        min-height: 200px;
+    }
+
+    #toBuy {
+        width: 80%;
+        /* font-size: 12px; */
+    }
+</style>
+
+<body>
+
+    <section>
+        <p id='title'>Add grocery item to the list.</p>
+        <!-- <p>Nothing to purchase</p> -->
+        <div id="grocery-list">
+
+        </div>
+        <div id='typeArea'>
+            <input type="text" id="toBuy" name="toBuy" placeholder="What you think of buying">
+            <input type="submit" id="submitBtn" value="Add Item"
+                onclick="submitItem(document.getElementById('toBuy').value)">
+        </div>
+    </section>
+</body>
+<script>
+    //Client-side code
+    const socket = io.connect();
+
+    //send a message when connect
+    socket.on("connection", data => {
+        console.log('hi'); //not working
+    });
+
+    //send a message when item is submitted
+    const submitItem = data => {
+        console.log("TO server: " + data);
+        socket.emit("add_item", data);
+        logItem(data);
+    }
+
+    //receive from server
+    socket.on("receive_item", data => {
+        console.log("FROM server: " + data);
+        logItem(data);
+    });
+
+
+    //log an item into the page
+    const logItem = data => {
+        console.log(data);
+        const groceryList = document.getElementById("grocery-list");
+        const createElem = document.createElement("p");
+        createElem.innerHTML = data;
+        groceryList.appendChild(createElem);
+    }
+</script>
+
+</html>
