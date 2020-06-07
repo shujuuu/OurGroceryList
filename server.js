@@ -3,8 +3,15 @@
 const app = require("http").createServer(handler);
 const fs = require('fs');
 const url = require('url');
-app.listen(80);
-console.log("your server is running at port 80!")
+
+// app.listen(80);
+// console.log("your server is running at port 80!")
+
+const port = process.env.PORT || 3000
+
+app.listen(port, () => {
+    console.log("your server is running at port 3000!");
+});
 
 //requesting handler
 function handler(req, res) {
@@ -36,9 +43,9 @@ io.sockets.on("connection", socket => {
         const dataToClient = data;
 
         //emit from server to everyone
-        socket.emit("receive_item", dataToClient);
+        // socket.emit("receive_item", dataToClient);
 
         //emit from server to everyone but the clients socket
-        // socket.broadcast.emit("receive_item", dataToClient);
+        socket.broadcast.emit("receive_item", dataToClient);
     })
 });
